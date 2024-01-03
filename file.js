@@ -83,7 +83,6 @@ class Tree {
 	}
 	insert(value, ptr = this.root) {
 		if (value === ptr.value) {
-			console.log("1!");
 			return null;
 		} else if (ptr.value > value) {
 			if (ptr.left === null) {
@@ -92,7 +91,6 @@ class Tree {
 			} else {
 				this.insert(value, ptr.left);
 			}
-			console.log("3!");
 		} else {
 			if (ptr.right === null) {
 				const node = new Node(value);
@@ -100,7 +98,61 @@ class Tree {
 			} else {
 				this.insert(value, ptr.right);
 			}
-			console.log("2!");
+		}
+	}
+	biggerThan(ptr) {
+		ptr = ptr.right;
+		while (ptr.left !== null) {
+			ptr = ptr.left;
+		}
+		return ptr.value;
+	}
+	delate(value, ptr = this.root) {
+		if (value < ptr.value) {
+			if (value === ptr.left.value) {
+				if ((null === ptr.left.left) & (null === ptr.left.right)) {
+					ptr.left = null;
+				} else {
+					if (
+						!((null !== ptr.left.left) & (null !== ptr.left.right))
+					) {
+						if (null !== ptr.left.left) {
+							ptr.left = ptr.left.left;
+						} else {
+							ptr.left = ptr.left.right;
+						}
+					} else {
+						ptr.left.value = this.biggerThan(ptr.left);
+						this.delate(ptr.left.value, ptr.left);
+					}
+				}
+			} else {
+				this.delate(value, ptr.left);
+			}
+		} else {
+			if (value === ptr.right.value) {
+				if ((null === ptr.right.left) & (null === ptr.right.right)) {
+					ptr.right = null;
+				} else {
+					if (
+						!(
+							(null !== ptr.right.left) &
+							(null !== ptr.right.right)
+						)
+					) {
+						if (null !== ptr.right.left) {
+							ptr.right = ptr.right.left;
+						} else {
+							ptr.right = ptr.right.right;
+						}
+					} else {
+						ptr.right.value = this.biggerThan(ptr.right);
+						this.delate(ptr.right.value, ptr.right);
+					}
+				}
+			} else {
+				this.delate(value, ptr.right);
+			}
 		}
 	}
 }
@@ -119,7 +171,10 @@ const prettyPrint = (node, prefix = "", isLeft = true) => {
 	}
 };
 tree.insert(2);
+tree.insert(4.5);
 tree.insert(21);
 tree.insert(8);
+tree.insert(8.5);
+tree.delate(9);
 prettyPrint(tree.root);
 console.log(tree.find(1));
