@@ -116,6 +116,7 @@ class Tree {
 					if (
 						!((null !== ptr.left.left) & (null !== ptr.left.right))
 					) {
+						console.log("!");
 						if (null !== ptr.left.left) {
 							ptr.left = ptr.left.left;
 						} else {
@@ -129,7 +130,7 @@ class Tree {
 			} else {
 				this.delate(value, ptr.left);
 			}
-		} else {
+		} else if (value > ptr.value) {
 			if (value === ptr.right.value) {
 				if ((null === ptr.right.left) & (null === ptr.right.right)) {
 					ptr.right = null;
@@ -140,6 +141,7 @@ class Tree {
 							(null !== ptr.right.right)
 						)
 					) {
+						console.log("!");
 						if (null !== ptr.right.left) {
 							ptr.right = ptr.right.left;
 						} else {
@@ -147,12 +149,46 @@ class Tree {
 						}
 					} else {
 						ptr.right.value = this.biggerThan(ptr.right);
-						this.delate(ptr.right.value, ptr.right);
+						if (ptr.right.value === ptr.right.right.value) {
+							ptr.right.right = ptr.right.right.right;
+						} else {
+							this.delate(ptr.right.value, ptr.right);
+						}
 					}
 				}
 			} else {
 				this.delate(value, ptr.right);
 			}
+		} else {
+			if (ptr === this.root) {
+				ptr.value = this.biggerThan(ptr);
+				this.delate(ptr.value, ptr.right);
+			}
+		}
+	}
+	levelOrder(array = [this.root], callback = []) {
+		if (array.length === 0) {
+			if (typeof callback === "function") {
+				return;
+			} else {
+				console.log(callback);
+			}
+		} else {
+			if (typeof callback === "function") {
+				callback(array[0]);
+			} else {
+				callback.push(array[0].value);
+			}
+
+			if (array[0].left !== null) {
+				array.push(array[0].left);
+			}
+			if (array[0].right !== null) {
+				array.push(array[0].right);
+			}
+			array.shift();
+			//this.levelOrder(array /*, callback*/);
+			this.levelOrder(array, callback);
 		}
 	}
 }
@@ -175,6 +211,14 @@ tree.insert(4.5);
 tree.insert(21);
 tree.insert(8);
 tree.insert(8.5);
-tree.delate(9);
+tree.insert(0.1);
+tree.delate(5);
+tree.insert(17);
 prettyPrint(tree.root);
 console.log(tree.find(1));
+tree.levelOrder(
+	[tree.root],
+	(randomFunction = (a) => {
+		console.log("( " + a.value + " )");
+	})
+);
